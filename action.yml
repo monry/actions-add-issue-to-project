@@ -41,6 +41,7 @@ runs:
   using: "composite"
   steps:
     - uses: monry/actions-get-project-id@v1
+      id: get-project-id
       with:
         github-token: ${{ inputs.github-token }}
         project-owner: ${{ inputs.project-owner }}
