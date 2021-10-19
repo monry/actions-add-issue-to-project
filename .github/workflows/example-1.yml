@@ -1,0 +1,27 @@
+name: 'Example (Specify: project-id, issue-id)'
+on:
+  workflow_dispatch:
+    inputs:
+      project-id:
+        required: true
+        description: 'Node Id of project..'
+      issue-id:
+        required: true
+        description: 'Node Id of issue.'
+
+jobs:
+  example:
+    name: Example job
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Add Issue to Project
+      id: add-issue-to-project
+      uses: ./
+      with:
+        github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        project-id: ${{ github.event.inputs.project-id }}
+        issue-id: ${{ github.event.inputs.issue-id }}
+    - name: Output result
+      run: |
+        echo '${{ steps.add-issue-to-project.outputs.added-project-item-id }}'
