@@ -1,4 +1,4 @@
-name: 'Example (Specify: project-owner, project-number, issue-repository, issue-number)'
+name: 'Example 4 (Specify: project-owner, project-number, issue-repository, issue-number)'
 on:
   workflow_dispatch:
     inputs:

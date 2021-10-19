@@ -41,7 +41,9 @@ runs:
   using: "composite"
   steps:
     - uses: monry/actions-get-project-id@v1
+      id: get-project-id
       with:
+        github-token: ${{ inputs.github-token }}
         project-owner: ${{ inputs.project-owner }}
         project-number: ${{ inputs.project-number }}
     - name: Add Issue to Project
@@ -104,9 +106,9 @@ runs:
               }
             }
           `;
-          
+
           var result = await github.graphql(mutation, variables);
-          if (result  && result.projectNextItem) {
-            return result.projectNextItem.id;
+          if (result && result.addProjectNextItem && result.addProjectNextItem.projectNextItem) {
+            return result.addProjectNextItem.projectNextItem.id;
           }
           return '';
