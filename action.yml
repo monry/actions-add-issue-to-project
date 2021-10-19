@@ -1,0 +1,112 @@
+name: "Add Issue to Project"
+author: 'Tetsuya Mori'
+description: 'Add GitHub Issues to GitHub Projects (Beta)'
+branding:
+  icon: plus-square
+  color: green
+inputs:
+  github-token:
+    default: ''
+    required: true
+    description: 'Personal Access Token that with `repo` and `org:read` is granted.'
+  project-id:
+    default: ''
+    required: false
+    description: 'Node Id of project.'
+  project-owner:
+    default: ''
+    required: false
+    description: 'User/Organization name project contains.'
+  project-number:
+    default: 0
+    required: false
+    description: 'The number of the target project.'
+  issue-id:
+    default: ''
+    required: false
+    description: 'Node Id of issue.'
+  issue-repository:
+    default: ''
+    required: false
+    description: 'Repository name with owner of issue.'
+  issue-number:
+    default: 0
+    required: false
+    description: 'Number of issue.'
+outputs:
+  added-project-item-id:
+    description: 'Project Item Id that added to project.'
+    value: ${{ steps.add-issue-to-project.outputs.result }}
+runs:
+  using: "composite"
+  steps:
+    - uses: monry/actions-get-project-id@v1
+      with:
+        project-owner: ${{ inputs.project-owner }}
+        project-number: ${{ inputs.project-number }}
+    - name: Add Issue to Project
+      uses: actions/github-script@v5
+      id: add-issue-to-project
+      with:
+        result-encoding: string
+        github-token: ${{ inputs.github-token }}
+        script: |
+          // Cannot use `if` at steps in composite actions, so validate here.
+          if ('${{ inputs.project-id }}'.length == 0 && '${{ inputs.project-owner }}'.length == 0 && ${{ inputs.project-number }} <= 0) {
+            return '';
+          }
+          if ('${{ inputs.issue-id }}'.length == 0 && ${{ inputs.issue-number }} <= 0 && '${{ inputs.issue-repository }}'.length == 0) {
+            return '';
+          }
+
+          var projectId = '${{ inputs.project-id }}' || '${{ steps.get-project-id.outputs.project-id }}';
+          if (!projectId) {
+            return '';
+          }
+          var issueId = '${{ inputs.issue-id }}';
+          if (!issueId) {
+            const [repositoryOwner, repositoryName] = '${{ inputs.issue-repository }}'.split('/');
+            var r = await github.graphql(
+              `
+                query($repositoryOwner: String!, $repositoryName: String!, $issueNumber: Int!) {
+                  repository(owner: $repositoryOwner, name: $repositoryName) {
+                    issue(number: $issueNumber) {
+                      id
+                    }
+                  }
+                }
+              `,
+              {
+                repositoryOwner: repositoryOwner,
+                repositoryName: repositoryName,
+                issueNumber: ${{ inputs.issue-number }}
+              }
+            );
+            if (!r || !r.repository || !r.repository.issue) {
+              return '';
+            }
+            issueId = r.repository.issue.id;
+          }
+
+          const variables = {
+            projectId: projectId,
+            issueId: issueId,
+            headers: {
+              'GraphQL-Features': 'projects_next_graphql'
+            }
+          };
+          const mutation = `
+            mutation($projectId: ID!, $issueId: ID!) {
+              addProjectNextItem(input: {projectId: $projectId, contentId: $issueId}) {
+                projectNextItem {
+                  id
+                }
+              }
+            }
+          `;
+          
+          var result = await github.graphql(mutation, variables);
+          if (result  && result.projectNextItem) {
+            return result.projectNextItem.id;
+          }
+          return '';
