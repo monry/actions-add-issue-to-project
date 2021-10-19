@@ -107,8 +107,7 @@ runs:
           `;
 
           var result = await github.graphql(mutation, variables);
-          console.log(result, result.projectNextItem);
-          if (result  && result.projectNextItem) {
-            return result.projectNextItem.id;
+          if (result && result.addProjectNextItem && result.addProjectNextItem.projectNextItem) {
+            return result.addProjectNextItem.projectNextItem.id;
           }
           return '';
