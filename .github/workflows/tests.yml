@@ -21,7 +21,7 @@ jobs:
       run: |
         [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' =~ '^PVTI_[a-zA-Z0-9]*$' ]]
     - name: TearDown
-      uses: monry/remove-issue-from-project@develop
+      uses: monry/delete-issue-from-project@develop
       with:
         github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         project-id: 'PVT_kwHOAAzNIc4AFSrF'
