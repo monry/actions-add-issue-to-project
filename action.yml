@@ -97,7 +97,7 @@ runs:
           const mutation = `
             mutation($projectId: ID!, $issueId: ID!) {
               addProjectV2ItemById(input: {projectId: $projectId, contentId: $issueId}) {
-                projectV2Item {
+                item {
                   id
                 }
               }
@@ -105,7 +105,7 @@ runs:
           `;
 
           var result = await github.graphql(mutation, variables);
-          if (result && result.addProjectV2ItemById && result.addProjectV2ItemById.projectV2Item) {
-            return result.addProjectV2ItemById.projectV2Item.id;
+          if (result && result.addProjectV2ItemById && result.addProjectV2ItemById.item) {
+            return result.addProjectV2ItemById.item.id;
           }
           return '';
