@@ -21,7 +21,7 @@ jobs:
       run: |
         [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' =~ '^PVTI_[a-zA-Z0-9]*$' ]]
     - name: TearDown
-      uses: ./.github/workflows/tests-teardown.yml
+      uses: monry/add-issue-to-project/.github/workflows/tests-teardown.yml@feature/add-tests
       secrets: inherit
       with:
         added-project-item-id: ${{ steps.add-issue-to-project.outputs.added-project-item-id }}
