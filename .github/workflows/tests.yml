@@ -20,9 +20,9 @@ jobs:
     - name: Assert
       run: |
         [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' =~ '^PVTI_[a-zA-Z0-9]*$' ]]
-    - name: TearDown
-      uses: monry/actions-delete-issue-from-project@develop
-      with:
-        github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-        project-id: 'PVT_kwHOAAzNIc4AFSrF'
-        project-item-id: ${{ inputs.added-project-item-id }}
+  tear-down:
+    name: TearDown tests
+    uses: ./.github/workflows/tests-teardown.yml
+    needs:
+    - test-project-id-issue-id
+    secrets: inherit
