@@ -77,6 +77,68 @@ jobs:
     - name: Assert
       run: |
         [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' =~ ^PVTI_[a-zA-Z0-9]*$ ]]
+  test-project-not-found-with-id:
+    name: Project specified by id does not found
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Add Project Item
+      id: add-issue-to-project
+      uses: ./
+      with:
+        github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        project-id: 'PVT_'
+        issue-id: 'I_kwDOGPYbTs5QphNK' # Test Fixture 05
+    - name: Assert
+      run: |
+        [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' = '' ]]
+  test-project-not-found-with-number:
+    name: Project specified by number does not found
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Add Project Item
+      id: add-issue-to-project
+      uses: ./
+      with:
+        github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        project-owner: 'monry'
+        project-number: -1
+        issue-id: 'I_kwDOGPYbTs5QphNK' # Test Fixture 05
+    - name: Assert
+      run: |
+        [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' = '' ]]
+  test-issue-not-found-with-id:
+    name: Issue specified by id does not found
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Add Project Item
+      id: add-issue-to-project
+      uses: ./
+      with:
+        github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        project-id: 'PVT_kwHOAAzNIc4AFSrF'
+        issue-id: 'I_'
+    - name: Assert
+      run: |
+        [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' = '' ]]
+  test-issue-not-found-with-number:
+    name: Issue specified by number does not found
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Add Project Item
+      id: add-issue-to-project
+      uses: ./
+      with:
+        github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        project-id: 'PVT_kwHOAAzNIc4AFSrF'
+        issue-repository: 'monry/actions-add-issue-to-project'
+        issue-number: -1
+    - name: Assert
+      run: |
+        [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' = '' ]]
   tear-down:
     name: TearDown tests
     uses: ./.github/workflows/tests-teardown.yml
