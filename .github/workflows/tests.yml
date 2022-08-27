@@ -27,7 +27,10 @@ jobs:
     uses: ./.github/workflows/tests-teardown.yml
     needs:
     - test-project-id-issue-id
+    strategy:
+      matrix:
+        added-project-item-id:
+        - ${{ needs.test-project-id-issue-id.outputs.added-project-item-id }}
     secrets: inherit
     with:
-      added-project-item-ids: >-
-        ${{ needs.test-project-id-issue-id.outputs.added-project-item-id }}
+      added-project-item-id: ${{ matrix.added-project-item-id }}
