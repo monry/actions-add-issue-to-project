@@ -22,7 +22,6 @@ jobs:
         [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' =~ '^PVTI_[a-zA-Z0-9]*$' ]]
     - name: TearDown
       uses: ./.github/workflows/tests-teardown.yml
-      secrets:
-        PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      secrets: inherit
       with:
         added-project-item-id: ${{ steps.add-issue-to-project.outputs.added-project-item-id }}
