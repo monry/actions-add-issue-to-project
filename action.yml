@@ -40,7 +40,7 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - uses: monry/actions-get-project-id@v1
+    - uses: monry/actions-get-project-id@v2
       id: get-project-id
       with:
         github-token: ${{ inputs.github-token }}
