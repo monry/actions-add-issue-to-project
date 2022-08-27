@@ -8,6 +8,8 @@ jobs:
   test-project-id-issue-id:
     name: Specify id of project and id of issue
     runs-on: ubuntu-latest
+    outputs:
+      added-project-item-id: ${{ steps.add-issue-to-project.outputs.added-project-item-id }}
     steps:
     - uses: actions/checkout@v2
     - name: Add Project Item with Id
@@ -16,7 +18,7 @@ jobs:
       with:
         github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         project-id: 'PVT_kwHOAAzNIc4AFSrF'
-        issue-id: 'I_kwDOGPYbTs5QpSG9'
+        issue-id: 'I_kwDOGPYbTs5QpSG9' # Fixture 01
     - name: Assert
       run: |
         [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' =~ '^PVTI_[a-zA-Z0-9]*$' ]]
@@ -26,3 +28,6 @@ jobs:
     needs:
     - test-project-id-issue-id
     secrets: inherit
+    with:
+      added-project-item-ids: >-
+        ${{ needs.test-project-id-issue-id.outputs.added-project-item-id }}

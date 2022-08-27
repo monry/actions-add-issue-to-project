@@ -4,6 +4,9 @@ on:
     secrets:
       PERSONAL_ACCESS_TOKEN:
         required: true
+    inputs:
+      added-project-item-ids:
+        required: true
 jobs:
   remove-added-project-item:
     name: Cleanup added project item
@@ -15,4 +18,4 @@ jobs:
       with:
         github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         project-id: 'PVT_kwHOAAzNIc4AFSrF'
-        issue-id: 'I_kwDOGPYbTs5QpSG9'
+        project-item-ids: ${{ inputs.added-project-item-ids }}
