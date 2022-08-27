@@ -92,15 +92,12 @@ runs:
 
           const variables = {
             projectId: projectId,
-            issueId: issueId,
-            headers: {
-              'GraphQL-Features': 'projects_next_graphql'
-            }
+            issueId: issueId
           };
           const mutation = `
             mutation($projectId: ID!, $issueId: ID!) {
-              addProjectNextItem(input: {projectId: $projectId, contentId: $issueId}) {
-                projectNextItem {
+              addProjectV2ItemById(input: {projectId: $projectId, contentId: $issueId}) {
+                projectV2Item {
                   id
                 }
               }
@@ -108,7 +105,7 @@ runs:
           `;
 
           var result = await github.graphql(mutation, variables);
-          if (result && result.addProjectNextItem && result.addProjectNextItem.projectNextItem) {
-            return result.addProjectNextItem.projectNextItem.id;
+          if (result && result.addProjectV2ItemById && result.addProjectV2ItemById.projectV2Item) {
+            return result.addProjectV2ItemById.projectV2Item.id;
           }
           return '';
