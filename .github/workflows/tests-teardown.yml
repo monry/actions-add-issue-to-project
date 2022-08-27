@@ -7,6 +7,7 @@ on:
     inputs:
       added-project-item-id:
         required: true
+        type: string
 jobs:
   remove-added-project-item:
     name: Cleanup added project item
