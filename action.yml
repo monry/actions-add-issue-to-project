@@ -36,7 +36,10 @@ inputs:
 outputs:
   added-project-item-id:
     description: 'Project Item Id that added to project.'
-    value: ${{ steps.add-issue-to-project.outputs.result }}
+    value: ${{ steps.add-issue-to-project.outputs.added-project-item-id }}
+  error:
+    description: 'Error message.'
+    value: ${{ steps.add-issue-to-project.outputs.error }}
 runs:
   using: "composite"
   steps:
