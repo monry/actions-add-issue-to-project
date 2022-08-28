@@ -21,7 +21,7 @@ jobs:
         issue-id: 'I_kwDOGPYbTs5QpSG9' # Test Fixture 01
     - name: Assert
       run: |
-        [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' =~ ^PVTI_[a-zA-Z0-9]*$ ]]
+        [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' =~ ^PVTI_[a-zA-Z0-9_-]*$ ]]
   test-project-number-issue-id:
     name: Specify number of project and id of issue
     runs-on: ubuntu-latest
@@ -39,7 +39,7 @@ jobs:
         issue-id: 'I_kwDOGPYbTs5QpgWb' # Test Fixture 02
     - name: Assert
       run: |
-        [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' =~ ^PVTI_[a-zA-Z0-9]*$ ]]
+        [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' =~ ^PVTI_[a-zA-Z0-9_-]*$ ]]
   test-project-id-issue-number:
     name: Specify id of project and number of issue
     runs-on: ubuntu-latest
@@ -57,7 +57,7 @@ jobs:
         issue-number: 15 # Test Fixture 03
     - name: Assert
       run: |
-        [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' =~ ^PVTI_[a-zA-Z0-9]*$ ]]
+        [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' =~ ^PVTI_[a-zA-Z0-9_-]*$ ]]
   test-project-number-issue-number:
     name: Specify number of project and number of issue
     runs-on: ubuntu-latest
@@ -76,7 +76,7 @@ jobs:
         issue-number: 16 # Test Fixture 04
     - name: Assert
       run: |
-        [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' =~ ^PVTI_[a-zA-Z0-9]*$ ]]
+        [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' =~ ^PVTI_[a-zA-Z0-9_-]*$ ]]
   test-project-not-found-with-id:
     name: Project specified by id does not found
     runs-on: ubuntu-latest
