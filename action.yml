@@ -36,58 +36,43 @@ inputs:
 outputs:
   added-project-item-id:
     description: 'Project Item Id that added to project.'
-    value: ${{ steps.add-issue-to-project.outputs.result }}
+    value: ${{ steps.add-issue-to-project.outputs.added-project-item-id }}
+  error:
+    description: 'Error message.'
+    value: ${{ steps.add-issue-to-project.outputs.error }}
 runs:
   using: "composite"
   steps:
     - uses: monry/actions-get-project-id@v2
       id: get-project-id
+      if: inputs.project-id == '' && inputs.project-owner != ''
       with:
         github-token: ${{ inputs.github-token }}
         project-owner: ${{ inputs.project-owner }}
         project-number: ${{ inputs.project-number }}
+    - uses: monry/actions-get-issue-id@v1
+      id: get-issue-id
+      if: inputs.issue-id == '' && inputs.issue-repository != ''
+      with:
+        github-token: ${{ inputs.github-token }}
+        issue-repository: ${{ inputs.issue-repository }}
+        issue-number: ${{ inputs.issue-number }}
     - name: Add Issue to Project
-      uses: actions/github-script@v5
+      uses: actions/github-script@v6
       id: add-issue-to-project
       with:
         result-encoding: string
         github-token: ${{ inputs.github-token }}
         script: |
-          // Cannot use `if` at steps in composite actions, so validate here.
-          if ('${{ inputs.project-id }}'.length == 0 && '${{ inputs.project-owner }}'.length == 0 && ${{ inputs.project-number }} <= 0) {
-            return '';
-          }
-          if ('${{ inputs.issue-id }}'.length == 0 && ${{ inputs.issue-number }} <= 0 && '${{ inputs.issue-repository }}'.length == 0) {
-            return '';
-          }
-
           var projectId = '${{ inputs.project-id }}' || '${{ steps.get-project-id.outputs.project-id }}';
           if (!projectId) {
-            return '';
+            core.setOutput('error', 'Project does not found.');
+            return;
           }
-          var issueId = '${{ inputs.issue-id }}';
+          var issueId = '${{ inputs.issue-id }}' || '${{ steps.get-issue-id.outputs.issue-id }}';
           if (!issueId) {
-            const [repositoryOwner, repositoryName] = '${{ inputs.issue-repository }}'.split('/');
-            var r = await github.graphql(
-              `
-                query($repositoryOwner: String!, $repositoryName: String!, $issueNumber: Int!) {
-                  repository(owner: $repositoryOwner, name: $repositoryName) {
-                    issue(number: $issueNumber) {
-                      id
-                    }
-                  }
-                }
-              `,
-              {
-                repositoryOwner: repositoryOwner,
-                repositoryName: repositoryName,
-                issueNumber: ${{ inputs.issue-number }}
-              }
-            );
-            if (!r || !r.repository || !r.repository.issue) {
-              return '';
-            }
-            issueId = r.repository.issue.id;
+            core.setOutput('error', 'Issue does not found.');
+            return;
           }
 
           const variables = {
@@ -104,8 +89,18 @@ runs:
             }
           `;
 
-          var result = await github.graphql(mutation, variables);
-          if (result && result.addProjectV2ItemById && result.addProjectV2ItemById.item) {
-            return result.addProjectV2ItemById.item.id;
+          let addedProjectV2ItemId = null;
+          try {
+            var result = await github.graphql(mutation, variables);
+            if (result && result.addProjectV2ItemById && result.addProjectV2ItemById.item) {
+              addedProjectV2ItemId = result.addProjectV2ItemById.item.id;
+            }
+          } catch (error) {
+            if (error.errors && error.errors.length > 0) {
+              core.setOutput('error', error.errors[0].message);
+              return;
+            }
           }
-          return '';
+
+          core.setOutput('added-project-item-id', addedProjectV2ItemId);
+          return;
