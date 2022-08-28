@@ -45,14 +45,14 @@ runs:
   steps:
     - uses: monry/actions-get-project-id@v2
       id: get-project-id
-      if: inputs.project-id == '' && inputs.project-owner != ''
+      if: inputs.project-id == ''
       with:
         github-token: ${{ inputs.github-token }}
         project-owner: ${{ inputs.project-owner }}
         project-number: ${{ inputs.project-number }}
     - uses: monry/actions-get-issue-id@v1
       id: get-issue-id
-      if: inputs.issue-id == '' && inputs.issue-repository != ''
+      if: inputs.issue-id == ''
       with:
         github-token: ${{ inputs.github-token }}
         issue-repository: ${{ inputs.issue-repository }}
