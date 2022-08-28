@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Remove Added Project Item
-      uses: monry/actions-delete-issue-from-project@develop
+      uses: monry/actions-delete-issue-from-project@v2
       with:
         github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         project-id: 'PVT_kwHOAAzNIc4AFSrF'
