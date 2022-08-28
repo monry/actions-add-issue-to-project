@@ -1,0 +1,22 @@
+name: Tests TearDown
+on:
+  workflow_call:
+    secrets:
+      PERSONAL_ACCESS_TOKEN:
+        required: true
+    inputs:
+      added-project-item-id:
+        required: true
+        type: string
+jobs:
+  remove-added-project-item:
+    name: Cleanup added project item
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Remove Added Project Item
+      uses: monry/actions-delete-issue-from-project@develop
+      with:
+        github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        project-id: 'PVT_kwHOAAzNIc4AFSrF'
+        project-item-id: ${{ inputs.added-project-item-id }}

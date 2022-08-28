@@ -1,0 +1,10 @@
+name: Tests on PullRequest
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review, synchronize]
+jobs:
+  tests:
+    if: github.event.pull_request.draft == false && github.event.pull_request.head.ref != 'main' && github.event.pull_request.head.ref != 'develop'
+    uses: ./.github/workflows/tests.yml
+    secrets:
+      PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
