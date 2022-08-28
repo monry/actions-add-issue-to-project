@@ -1,4 +1,4 @@
-# Add GitHub Issues to GitHub Projects (Beta)
+# Add GitHub Issues to GitHub Projects
 
 Add issue to project.
 
@@ -7,10 +7,10 @@ Add issue to project.
 ## Specify parameters without id
 
 ```yaml
-- uses: monry/actions-add-issue-to-project@v1
+- uses: monry/actions-add-issue-to-project@v2
   with:
     # Personal Access Token that with `repo`, `org:read` and `org:write` are granted.
-    github-token: ${{ secrets.PAT_PROJECT_NEXT }}
+    github-token: ${{ secrets.PAT_PROJECT_V2 }}
     project-owner: 'monry'
     project-number: 1
     issue-repository: 'monry/awesome-repository'
@@ -20,11 +20,11 @@ Add issue to project.
 ## Specify parameters with id
 
 ```yaml
-- uses: monry/actions-add-issue-to-project@v1
+- uses: monry/actions-add-issue-to-project@v2
   with:
     # Personal Access Token that with `repo`, `org:read` and `org:write` are granted.
-    github-token: ${{ secrets.PAT_PROJECT_NEXT }}
-    project-id: 'PN_xxxxxxxxxxxxxx'
+    github-token: ${{ secrets.PAT_PROJECT_V2 }}
+    project-id: 'PVT_xxxxxxxxxxxxxx'
     issue-id: ${{ github.event.issue.node_id }}
 ```
 
@@ -40,7 +40,7 @@ For security purposes, it is recommended to register Personal Access Token as Se
 
 Node ID of project.
 
-This value can obtain from [monry/actions-get-project-id@v1](https://github.com/marketplace/actions/get-project-id).<br />
+This value can obtain from [monry/actions-get-project-id@v2](https://github.com/marketplace/actions/get-project-id).<br />
 See also: [monry/actions-get-project-id](https://github.com/monry/actions-get-project-id) repos.
 
 ## `project-owner`
@@ -63,7 +63,8 @@ The project number is the number shown in the URL or list of projects.
 
 Node ID of issue.
 
-This value can obtain from `github.event.issue.node_id` if triggered by `on: issues`.
+This value can obtain from `github.event.issue.node_id` if triggered by `on: issues`, or obtain from [monry/actions-get-issue-id@v1](https://github.com/marketplace/actions/get-issue-id).<br />
+See also: [monry/actions-get-issue-id](https://github.com/monry/actions-get-issue-id) repos.
 
 ## `issue-repository`
 
@@ -84,10 +85,10 @@ Number of issue.
 Added Project Item Id stores into output variable named `added-project-item-id`.
 
 ```yaml
-- uses: monry/actions-add-issue-to-project@v1
+- uses: monry/actions-add-issue-to-project@v2
   id: add-issue-to-project # requires `id` to refer output values with after steps
   with:
-    github-token: ${{ secrets.PAT_PROJECT_NEXT }}
+    github-token: ${{ secrets.PAT_PROJECT_V2 }}
     project-owner: 'monry'
     project-number: 1
     issue-repository: 'monry/awesome-repository'
@@ -95,3 +96,7 @@ Added Project Item Id stores into output variable named `added-project-item-id`.
 - run: |
     echo '${{ steps.add-issue-to-project.outputs.added-project-item-id }}'
 ```
+
+## `error`
+
+Set error message if some error occured.
