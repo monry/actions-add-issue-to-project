@@ -1,0 +1,159 @@
+name: Tests
+on:
+  workflow_call:
+    secrets:
+      PERSONAL_ACCESS_TOKEN:
+        required: true
+jobs:
+  test-project-id-issue-id:
+    name: Specify id of project and id of issue
+    runs-on: ubuntu-latest
+    outputs:
+      added-project-item-id: ${{ steps.add-issue-to-project.outputs.added-project-item-id }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Add Project Item with Id
+      id: add-issue-to-project
+      uses: ./
+      with:
+        github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        project-id: 'PVT_kwHOAAzNIc4AFSrF'
+        issue-id: 'I_kwDOGPYbTs5QpSG9' # Test Fixture 01
+    - name: Assert
+      run: |
+        [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' =~ ^PVTI_[a-zA-Z0-9_-]*$ ]]
+  test-project-number-issue-id:
+    name: Specify number of project and id of issue
+    runs-on: ubuntu-latest
+    outputs:
+      added-project-item-id: ${{ steps.add-issue-to-project.outputs.added-project-item-id }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Add Project Item with Id
+      id: add-issue-to-project
+      uses: ./
+      with:
+        github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        project-owner: 'monry'
+        project-number: 3
+        issue-id: 'I_kwDOGPYbTs5QpgWb' # Test Fixture 02
+    - name: Assert
+      run: |
+        [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' =~ ^PVTI_[a-zA-Z0-9_-]*$ ]]
+  test-project-id-issue-number:
+    name: Specify id of project and number of issue
+    runs-on: ubuntu-latest
+    outputs:
+      added-project-item-id: ${{ steps.add-issue-to-project.outputs.added-project-item-id }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Add Project Item with Id
+      id: add-issue-to-project
+      uses: ./
+      with:
+        github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        project-id: 'PVT_kwHOAAzNIc4AFSrF'
+        issue-repository: 'monry/actions-add-issue-to-project'
+        issue-number: 15 # Test Fixture 03
+    - name: Assert
+      run: |
+        [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' =~ ^PVTI_[a-zA-Z0-9_-]*$ ]]
+  test-project-number-issue-number:
+    name: Specify number of project and number of issue
+    runs-on: ubuntu-latest
+    outputs:
+      added-project-item-id: ${{ steps.add-issue-to-project.outputs.added-project-item-id }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Add Project Item with Id
+      id: add-issue-to-project
+      uses: ./
+      with:
+        github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        project-owner: 'monry'
+        project-number: 3
+        issue-repository: 'monry/actions-add-issue-to-project'
+        issue-number: 16 # Test Fixture 04
+    - name: Assert
+      run: |
+        [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' =~ ^PVTI_[a-zA-Z0-9_-]*$ ]]
+  test-project-not-found-with-id:
+    name: Project specified by id does not found
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Add Project Item
+      id: add-issue-to-project
+      uses: ./
+      with:
+        github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        project-id: 'PVT_'
+        issue-id: 'I_kwDOGPYbTs5QphNK' # Test Fixture 05
+    - name: Assert
+      run: |
+        [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' = '' ]]
+  test-project-not-found-with-number:
+    name: Project specified by number does not found
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Add Project Item
+      id: add-issue-to-project
+      uses: ./
+      with:
+        github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        project-owner: 'monry'
+        project-number: -1
+        issue-id: 'I_kwDOGPYbTs5QphNK' # Test Fixture 05
+    - name: Assert
+      run: |
+        [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' = '' ]]
+  test-issue-not-found-with-id:
+    name: Issue specified by id does not found
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Add Project Item
+      id: add-issue-to-project
+      uses: ./
+      with:
+        github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        project-id: 'PVT_kwHOAAzNIc4AFSrF'
+        issue-id: 'I_'
+    - name: Assert
+      run: |
+        [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' = '' ]]
+  test-issue-not-found-with-number:
+    name: Issue specified by number does not found
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Add Project Item
+      id: add-issue-to-project
+      uses: ./
+      with:
+        github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        project-id: 'PVT_kwHOAAzNIc4AFSrF'
+        issue-repository: 'monry/actions-add-issue-to-project'
+        issue-number: -1
+    - name: Assert
+      run: |
+        [[ '${{ steps.add-issue-to-project.outputs.added-project-item-id }}' = '' ]]
+  tear-down:
+    name: TearDown tests
+    uses: ./.github/workflows/tests-teardown.yml
+    needs:
+    - test-project-id-issue-id
+    - test-project-number-issue-id
+    - test-project-id-issue-number
+    - test-project-number-issue-number
+    strategy:
+      matrix:
+        added-project-item-id:
+        - ${{ needs.test-project-id-issue-id.outputs.added-project-item-id }}
+        - ${{ needs.test-project-number-issue-id.outputs.added-project-item-id }}
+        - ${{ needs.test-project-id-issue-number.outputs.added-project-item-id }}
+        - ${{ needs.test-project-number-issue-number.outputs.added-project-item-id }}
+    secrets: inherit
+    with:
+      added-project-item-id: ${{ matrix.added-project-item-id }}
