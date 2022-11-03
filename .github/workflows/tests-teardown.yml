@@ -13,7 +13,7 @@ jobs:
     name: Cleanup added project item
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Remove Added Project Item
       uses: monry/actions-delete-issue-from-project@v2
       with:
