@@ -8,7 +8,7 @@ inputs:
   github-token:
     default: ''
     required: true
-    description: 'Personal Access Token that with `repo` and `org:read` is granted.'
+    description: 'Personal Access Token that with `repo`, `project`, `org:read` and `org:write` is granted.'
   project-id:
     default: ''
     required: false
